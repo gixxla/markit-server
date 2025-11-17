@@ -12,8 +12,8 @@ export class Tag extends CommonEntity {
   @JoinColumn({ name: "user_id" })
   user: User;
 
-  @Column()
-  user_id: number;
+  @Column({ name: "user_id" })
+  userId: number;
 
   @OneToMany(() => BookmarkTag, (bookmarkTag) => bookmarkTag.tag)
   bookmarkTags: BookmarkTag[];

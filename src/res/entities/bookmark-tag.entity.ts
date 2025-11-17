@@ -5,10 +5,10 @@ import { Tag } from "./tag.entity";
 @Entity("bookmark_tag")
 export class BookmarkTag {
   @PrimaryColumn()
-  bookmark_id: number;
+  bookmarkId: number;
 
   @PrimaryColumn()
-  tag_id: number;
+  tagId: number;
 
   @ManyToOne(() => Bookmark, (bookmark) => bookmark.bookmarkTags)
   bookmark: Bookmark;

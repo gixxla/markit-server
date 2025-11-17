@@ -8,12 +8,12 @@ export class OfflineBookmark extends CommonEntity {
   @JoinColumn({ name: "bookmark_id" })
   bookmark: Bookmark;
 
-  @Column({ unique: true })
-  bookmark_id: number;
+  @Column({ name: "bookmark_id", unique: true })
+  bookmarkId: number;
 
   @Column({ type: "text" })
   data: string;
 
   @Column({ type: "varchar", length: 20 })
-  data_type: string;
+  dataType: string;
 }

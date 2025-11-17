@@ -11,8 +11,8 @@ export class Bookmark extends CommonEntity {
   @JoinColumn({ name: "user_id" })
   user: User;
 
-  @Column()
-  user_id: number;
+  @Column({ name: "user_id" })
+  userId: number;
 
   @Column({ type: "text" })
   url: string;
@@ -24,14 +24,14 @@ export class Bookmark extends CommonEntity {
   @JoinColumn({ name: "category_id" })
   category: Category;
 
-  @Column({ nullable: true })
-  category_id: number;
+  @Column({ name: "category_id", nullable: true })
+  categoryId: number;
 
   @Column({ type: "boolean", default: true })
-  is_read_later: boolean;
+  isReadLater: boolean;
 
   @Column({ type: "boolean", default: false })
-  is_offline_available: boolean;
+  isOfflineAvailable: boolean;
 
   @OneToMany(() => BookmarkTag, (bookmarkTag) => bookmarkTag.bookmark)
   bookmarkTags: BookmarkTag[];
@@ -40,5 +40,5 @@ export class Bookmark extends CommonEntity {
   offlineBookmark: OfflineBookmark;
 
   @Column({ type: "timestamp", nullable: true })
-  last_accessed_at: Date;
+  lastAccessedAt: Date;
 }

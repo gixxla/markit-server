@@ -12,8 +12,8 @@ export class Category extends CommonEntity {
   @JoinColumn({ name: "user_id" })
   user: User;
 
-  @Column()
-  user_id: number;
+  @Column({ name: "user_id" })
+  userId: number;
 
   @OneToMany(() => Bookmark, (bookmark) => bookmark.category)
   bookmarks: Bookmark[];
