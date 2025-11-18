@@ -1,9 +1,10 @@
+/* eslint-disable import/no-cycle */
 import { Entity, Column, OneToOne, JoinColumn } from "typeorm";
-import { CommonEntity } from "./common.entity";
-import { Bookmark } from "./bookmark.entity";
+import CommonEntity from "./common.entity";
+import Bookmark from "./bookmark.entity";
 
 @Entity("offline_bookmark")
-export class OfflineBookmark extends CommonEntity {
+export default class OfflineBookmark extends CommonEntity {
   @OneToOne(() => Bookmark, (bookmark) => bookmark.offlineBookmark)
   @JoinColumn({ name: "bookmark_id" })
   bookmark: Bookmark;
@@ -14,6 +15,6 @@ export class OfflineBookmark extends CommonEntity {
   @Column({ type: "text" })
   data: string;
 
-  @Column({ type: "varchar", length: 20 })
+  @Column({ name: "data_type", type: "varchar", length: 20 })
   dataType: string;
 }

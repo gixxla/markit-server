@@ -1,12 +1,11 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import * as path from "path";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { UserModule } from "./res/user/user.module";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-
-console.log(`.env.${process.env.NODE_ENV}`);
+import UserModule from "./res/user/user.module";
+import AuthModule from "./res/auth/auth.module";
 
 @Module({
   imports: [
@@ -31,8 +30,9 @@ console.log(`.env.${process.env.NODE_ENV}`);
       }),
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export default class AppModule {}

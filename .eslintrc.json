@@ -16,7 +16,18 @@
   ],
   "rules": {
     "@typescript-eslint/camelcase": "off",
-    "import/extensions": ["error", "ignorePackages"],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "import/no-cycle": ["error", { "ignoreExternal": true }],
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "no-console": "error"
   },
   "parser": "@typescript-eslint/parser",
