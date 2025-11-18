@@ -3,7 +3,7 @@ import AuthService from "./auth.service";
 import RegisterDto from "./register.dto";
 
 @Controller("auth")
-class AuthController {
+export default class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("anonymous")
@@ -37,5 +37,3 @@ class AuthController {
     };
   }
 }
-
-export default AuthController;

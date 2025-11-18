@@ -6,7 +6,7 @@ import User from "../entities/user.entity";
 import RegisterDto from "./register.dto";
 
 @Injectable()
-class AuthService {
+export default class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -46,7 +46,11 @@ class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Repository.save가 update로 동작하는 기준은 PK이므로, 해당 회원의 PK를 검색한다.
+    const user = await this.userRepository.findOne({ where: { anonymousId } });
+
     const newUser = this.userRepository.create({
+      id: user?.id,
       anonymousId,
       email,
       hashedPassword,
@@ -64,5 +68,3 @@ class AuthService {
     }
   }
 }
-
-export default AuthService;
