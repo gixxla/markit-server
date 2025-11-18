@@ -4,6 +4,7 @@ import * as path from "path";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import UserModule from "./res/user/user.module";
 import AuthModule from "./res/auth/auth.module";
 
 @Module({
@@ -28,6 +29,7 @@ import AuthModule from "./res/auth/auth.module";
         timezone: "local",
       }),
     }),
+    UserModule,
     AuthModule,
   ],
   controllers: [AppController],

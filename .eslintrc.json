@@ -27,6 +27,7 @@
       }
     ],
     "import/no-cycle": ["error", { "ignoreExternal": true }],
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "no-console": "error"
   },
   "parser": "@typescript-eslint/parser",
