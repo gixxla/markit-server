@@ -1,16 +1,16 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength, IsUUID } from "class-validator";
 
 class RegisterDto {
-  @IsUUID
-  @IsNotEmpty
+  @IsUUID()
+  @IsNotEmpty()
   anonymousId: string;
 
-  @IsEmail
-  @IsNotEmpty
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
 
-  @IsString
-  @IsNotEmpty
+  @IsString()
+  @IsNotEmpty()
   @MinLength(6, { message: "비밀번호는 최소 6자 이상이어야 합니다." })
   password: string;
 }
