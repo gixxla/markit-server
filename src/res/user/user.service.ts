@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import User from "../entities/user.entity";
 import RegisterDto from "./register.dto";
@@ -66,5 +66,18 @@ export default class UserService {
       // 데이터베이스 오류 처리
       throw new ConflictException("회원가입 중 오류가 발생했습니다.");
     }
+  }
+
+  async findOne(criteria: FindOptionsWhere<User>): Promise<User | null> {
+    return this.userRepository.findOne({ where: criteria });
+  }
+
+  async create(createUserData: Partial<User>): Promise<User> {
+    const user = this.userRepository.create(createUserData);
+    return this.userRepository.save(user);
+  }
+
+  async update(userId: number, updateData: Partial<User>): Promise<void> {
+    await this.userRepository.update(userId, updateData);
   }
 }
