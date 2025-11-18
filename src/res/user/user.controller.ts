@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpException, HttpStatus, HttpCode } from "@nestjs/common";
+import { Public } from "src/decorators/public.decorator";
 import UserService from "./user.service";
 import RegisterDto from "./register.dto";
 
@@ -6,6 +7,7 @@ import RegisterDto from "./register.dto";
 export default class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Public()
   @Post("anonymous")
   async registerAnonymous(@Body() registrationData: { anonymousId: string }) {
     if (!registrationData.anonymousId) {
@@ -23,6 +25,7 @@ export default class UserController {
     };
   }
 
+  @Public()
   @Post("register")
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto) {
