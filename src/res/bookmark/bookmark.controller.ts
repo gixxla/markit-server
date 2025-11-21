@@ -4,6 +4,7 @@ import BookmarkService from "./bookmark.service";
 import CreateBookmarkDto from "./create-bookmark.dto";
 import UserDeco from "../../decorators/user.decorator";
 import User from "../entities/user.entity";
+import GetBookmarksDto from "./get-bookmarks.dto";
 
 @Controller("bookmark")
 export default class BookmarkController {
@@ -25,5 +26,10 @@ export default class BookmarkController {
   @Post()
   async createBookmark(@UserDeco() user: User, @Body() createBookmarkDto: CreateBookmarkDto) {
     return this.bookmarkService.createBookmark(user, createBookmarkDto);
+  }
+
+  @Get()
+  async getBookmarks(@UserDeco() user: User, @Query() getBookmarksDto: GetBookmarksDto) {
+    return this.bookmarkService.GetBookmarks(user, getBookmarksDto);
   }
 }

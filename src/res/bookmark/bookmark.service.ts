@@ -9,6 +9,7 @@ import Tag from "../entities/tag.entity";
 import BookmarkTag from "../entities/bookmark-tag.entity";
 import User from "../entities/user.entity";
 import CreateBookmarkDto from "./create-bookmark.dto";
+import GetBookmarksDto from "./get-bookmarks.dto";
 
 @Injectable()
 export default class BookmarkService {
@@ -75,5 +76,51 @@ export default class BookmarkService {
       await this.bookmarkTagRepository.save(newBookmarkTags);
     }
     return savedBookmark;
+  }
+
+  async GetBookmarks(user: User, dto: GetBookmarksDto) {
+    const { limit = 20, cursor, tag } = dto;
+
+    const query = this.bookmarkRepository
+      .createQueryBuilder("bookmark")
+      .leftJoinAndSelect("bookmark.bookmarkTags", "bookmarkTags")
+      .leftJoinAndSelect("bookmarkTags.tag", "tag")
+      .where("bookmark.userId = :userId", { userId: user.id })
+      .orderBy("bookmark.id", "DESC")
+      .take(limit + 1);
+
+    if (cursor) {
+      query.andWhere("bookmark.id < :cursor", { cursor });
+    }
+
+    if (tag) {
+      query.andWhere("tag.name = :tagName", { tagName: tag });
+    }
+
+    const bookmarks = await query.getMany();
+
+    let hasNextPage = false;
+    let nextCursor: string | null = null;
+
+    if (bookmarks.length > limit) {
+      hasNextPage = true;
+      bookmarks.pop();
+      nextCursor = bookmarks[bookmarks.length - 1].id;
+    }
+
+    const items = bookmarks.map((bm) => ({
+      ...bm,
+      tags: bm.bookmarkTags.map((bt) => bt.tag.name),
+      bookmarkTags: undefined,
+    }));
+
+    return {
+      data: items,
+      meta: {
+        hasNextPage,
+        nextCursor,
+        limit,
+      },
+    };
   }
 }
