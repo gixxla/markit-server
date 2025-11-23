@@ -8,6 +8,7 @@ import UserModule from "./res/user/user.module";
 import AuthModule from "./res/auth/auth.module";
 import BookmarkModule from "./res/bookmark/bookmark.module";
 import CategoryModule from "./res/category/category.module";
+import TagModule from "./res/tag/tag.module";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import CategoryModule from "./res/category/category.module";
     AuthModule,
     BookmarkModule,
     CategoryModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService],

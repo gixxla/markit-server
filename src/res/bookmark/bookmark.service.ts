@@ -193,7 +193,6 @@ export default class BookmarkService {
       throw new ForbiddenException("이 북마크를 삭제할 권한이 없습니다.");
     }
 
-    await this.bookmarkTagRepository.delete({ bookmarkId });
     await this.bookmarkRepository.delete(bookmarkId);
   }
 }
