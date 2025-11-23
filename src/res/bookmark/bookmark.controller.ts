@@ -14,10 +14,10 @@ import {
 } from "@nestjs/common";
 import { Public } from "src/decorators/public.decorator";
 import BookmarkService from "./bookmark.service";
-import CreateBookmarkDto from "./create-bookmark.dto";
+import CreateBookmarkDto from "./dto/create-bookmark.dto";
 import UserDeco from "../../decorators/user.decorator";
 import User from "../entities/user.entity";
-import GetBookmarksDto from "./get-bookmarks.dto";
+import GetBookmarksDto from "./dto/get-bookmarks.dto";
 import UpdateBookmarkDto from "./update-bookmark.dto";
 
 @Controller("bookmark")
