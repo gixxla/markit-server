@@ -1,4 +1,5 @@
-import { IsArray, IsBoolean, IsOptional, IsString, IsUrl } from "class-validator";
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, IsUrl } from "class-validator";
+import { Type } from "class-transformer";
 
 export default class UpdateBookmarkDto {
   @IsOptional()
@@ -12,6 +13,11 @@ export default class UpdateBookmarkDto {
   @IsOptional()
   @IsBoolean()
   isReadLater?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  categoryId?: number;
 
   @IsOptional()
   @IsArray()

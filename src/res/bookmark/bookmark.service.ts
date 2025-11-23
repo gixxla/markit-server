@@ -11,6 +11,7 @@ import CreateBookmarkDto from "./dto/create-bookmark.dto";
 import GetBookmarksDto from "./dto/get-bookmarks.dto";
 import UpdateBookmarkDto from "./dto/update-bookmark.dto";
 import TagService from "../tag/tag.service";
+import CategoryService from "../category/category.service";
 
 @Injectable()
 export default class BookmarkService {
@@ -19,6 +20,7 @@ export default class BookmarkService {
     private readonly bookmarkRepository: Repository<Bookmark>,
     @InjectRepository(BookmarkTag)
     private readonly bookmarkTagRepository: Repository<BookmarkTag>,
+    private readonly categoryService: CategoryService,
     private readonly tagService: TagService,
   ) {}
 
@@ -41,13 +43,18 @@ export default class BookmarkService {
   }
 
   async createBookmark(user: User, createBookmarkDto: CreateBookmarkDto): Promise<Bookmark> {
-    const { url, title, tags } = createBookmarkDto;
+    const { url, title, tags, categoryId } = createBookmarkDto;
+
+    if (categoryId) {
+      await this.categoryService.validateCategory(user.id, categoryId);
+    }
 
     const newBookmark = this.bookmarkRepository.create({
       user,
       url,
       title,
       isReadLater: true,
+      categoryId,
     });
 
     const savedBookmark = await this.bookmarkRepository.save(newBookmark);
@@ -120,7 +127,7 @@ export default class BookmarkService {
   }
 
   async updateBookmark(userId: string, bookmarkId: number, updateDto: UpdateBookmarkDto): Promise<Bookmark> {
-    const { tags, ...fieldsToUpdate } = updateDto;
+    const { tags, ...dataToUpdate } = updateDto;
 
     const bookmark = await this.bookmarkRepository.findOne({
       where: { id: String(bookmarkId) },
@@ -135,7 +142,13 @@ export default class BookmarkService {
       throw new ForbiddenException("이 북마크를 수정할 권한이 없습니다.");
     }
 
-    await this.bookmarkRepository.update(bookmarkId, fieldsToUpdate);
+    if (dataToUpdate.categoryId) {
+      await this.categoryService.validateCategory(userId, dataToUpdate.categoryId);
+    }
+
+    if (Object.keys(dataToUpdate).length > 0) {
+      await this.bookmarkRepository.update(bookmarkId, dataToUpdate);
+    }
 
     if (tags && tags.length > 0) {
       await this.bookmarkTagRepository.delete({ bookmarkId });
@@ -155,7 +168,7 @@ export default class BookmarkService {
 
     return this.bookmarkRepository.findOne({
       where: { id: String(bookmarkId) },
-      relations: ["bookmarkTags", "bookmarkTags.tag"],
+      relations: ["bookmarkTags", "bookmarkTags.tag", "category"],
     }) as Promise<Bookmark>;
   }
 

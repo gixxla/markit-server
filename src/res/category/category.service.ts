@@ -65,4 +65,16 @@ export default class CategoryService {
 
     await this.categoryRepository.delete(categoryId);
   }
+
+  async validateCategory(userId: string, categoryId: number): Promise<Category> {
+    const category = await this.categoryRepository.findOne({
+      where: { id: String(categoryId), userId: Number(userId) },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`ID가 ${categoryId}인 카테고리를 찾을 수 없습니다.`);
+    }
+
+    return category;
+  }
 }
