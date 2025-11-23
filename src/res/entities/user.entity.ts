@@ -1,12 +1,12 @@
 /* eslint-disable import/no-cycle */
 import { Entity, Column, OneToMany } from "typeorm";
-import CommonEntity from "./common.entity";
-import Bookmark from "./bookmark.entity";
-import Category from "./category.entity";
-import Tag from "./tag.entity";
+import { CommonEntity } from "./common.entity";
+import { Bookmark } from "./bookmark.entity";
+import { Category } from "./category.entity";
+import { Tag } from "./tag.entity";
 
 @Entity("user")
-export default class User extends CommonEntity {
+export class User extends CommonEntity {
   @Column({ name: "anonymous_id", type: "uuid", unique: true })
   anonymousId: string;
 

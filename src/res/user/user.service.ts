@@ -2,17 +2,17 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
-import User from "../entities/user.entity";
-import RegisterDto from "./dto/register.dto";
+import { User } from "../entities/user.entity";
+import { RegisterDto } from "./dto/register-user.dto";
 
 @Injectable()
-export default class UserService {
+export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
 
-  async registerAnonymous(anonymousId: string): Promise<User> {
+  async registerByAnonymous(anonymousId: string): Promise<User> {
     let newUser = await this.userRepository.findOne({ where: { anonymousId } });
 
     if (newUser) {
@@ -77,7 +77,7 @@ export default class UserService {
     return this.userRepository.save(user);
   }
 
-  async update(userId: number, updateData: Partial<User>): Promise<void> {
+  async update(userId: string, updateData: Partial<User>): Promise<void> {
     await this.userRepository.update(userId, updateData);
   }
 }

@@ -8,20 +8,19 @@ import {
   Post,
   Body,
   Patch,
-  ParseIntPipe,
   Delete,
   Param,
 } from "@nestjs/common";
 import { Public } from "src/decorators/public.decorator";
-import BookmarkService from "./bookmark.service";
-import CreateBookmarkDto from "./dto/create-bookmark.dto";
+import { BookmarkService } from "./bookmark.service";
+import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
+import { User } from "../entities/user.entity";
+import { GetBookmarksDto } from "./dto/get-bookmarks.dto";
+import { UpdateBookmarkDto } from "./dto/update-bookmark.dto";
 import UserDeco from "../../decorators/user.decorator";
-import User from "../entities/user.entity";
-import GetBookmarksDto from "./dto/get-bookmarks.dto";
-import UpdateBookmarkDto from "./dto/update-bookmark.dto";
 
 @Controller("bookmark")
-export default class BookmarkController {
+export class BookmarkController {
   constructor(private readonly bookmarkService: BookmarkService) {}
 
   @Public()
@@ -39,26 +38,22 @@ export default class BookmarkController {
 
   @Post()
   async createBookmark(@UserDeco() user: User, @Body() createBookmarkDto: CreateBookmarkDto) {
-    return this.bookmarkService.createBookmark(user, createBookmarkDto);
+    return this.bookmarkService.create(user, createBookmarkDto);
   }
 
   @Get()
   async getBookmarks(@UserDeco() user: User, @Query() getBookmarksDto: GetBookmarksDto) {
-    return this.bookmarkService.GetBookmarks(user, getBookmarksDto);
+    return this.bookmarkService.findAll(user, getBookmarksDto);
   }
 
   @Patch(":id")
-  async updateBookmark(
-    @UserDeco() user: User,
-    @Param("id", ParseIntPipe) id: number,
-    @Body() updateDto: UpdateBookmarkDto,
-  ) {
-    return this.bookmarkService.updateBookmark(user.id, id, updateDto);
+  async updateBookmark(@UserDeco() user: User, @Param("id") id: string, @Body() updateDto: UpdateBookmarkDto) {
+    return this.bookmarkService.update(user.id, id, updateDto);
   }
 
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteBookmark(@UserDeco() user: User, @Param("id", ParseIntPipe) id: number) {
-    return this.bookmarkService.deleteBookmark(user.id, id);
+  async deleteBookmark(@UserDeco() user: User, @Param("id") id: string) {
+    return this.bookmarkService.delete(user.id, id);
   }
 }

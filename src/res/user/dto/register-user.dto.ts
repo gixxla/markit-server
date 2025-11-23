@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength, IsUUID } from "class-validator";
 
-export default class RegisterDto {
+export class RegisterDto {
   @IsUUID()
   @IsNotEmpty()
   anonymousId: string;

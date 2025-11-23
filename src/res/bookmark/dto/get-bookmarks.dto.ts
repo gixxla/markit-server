@@ -1,7 +1,7 @@
 import { IsNumber, IsOptional, IsString, Min } from "class-validator";
 import { Type } from "class-transformer";
 
-export default class GetBookmarksDto {
+export class GetBookmarksDto {
   @IsOptional()
   @IsNumber()
   @Min(1)
@@ -13,9 +13,8 @@ export default class GetBookmarksDto {
   cursor?: string;
 
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  categoryId?: number;
+  @IsString()
+  categoryId?: string;
 
   @IsOptional()
   @IsString()

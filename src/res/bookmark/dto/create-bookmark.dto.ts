@@ -1,7 +1,6 @@
-import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl } from "class-validator";
+import { IsArray, IsNotEmpty, IsOptional, IsString, IsUrl } from "class-validator";
 
-export default class CreateBookmarkDto {
+export class CreateBookmarkDto {
   @IsUrl({}, { message: "URL 형식이 유효하지 않습니다." })
   @IsNotEmpty()
   url: string;
@@ -11,9 +10,8 @@ export default class CreateBookmarkDto {
   title?: string;
 
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  categoryId?: number;
+  @IsString()
+  categoryId?: string;
 
   @IsArray()
   @IsOptional()

@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
-import UserService from "../user/user.service";
-import User from "../entities/user.entity";
+import { UserService } from "../user/user.service";
+import { User } from "../entities/user.entity";
 
 @Injectable()
-export default class AuthService {
+export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
@@ -22,7 +22,7 @@ export default class AuthService {
       throw new BadRequestException("비밀번호가 일치하지 않습니다.");
     }
 
-    await this.userService.update(parseInt(user.id, 10), { lastActiveAt: new Date() });
+    await this.userService.update(user.id, { lastActiveAt: new Date() });
 
     return {
       id: user.id,
@@ -32,7 +32,7 @@ export default class AuthService {
     };
   }
 
-  async logIn(user: Partial<User>) {
+  async getAccessToken(user: Partial<User>) {
     const payload = { email: user.email, sub: user.id };
     return { accessToken: this.jwtService.sign(payload) };
   }

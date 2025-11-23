@@ -4,11 +4,11 @@ import * as path from "path";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import UserModule from "./res/user/user.module";
-import AuthModule from "./res/auth/auth.module";
-import BookmarkModule from "./res/bookmark/bookmark.module";
-import CategoryModule from "./res/category/category.module";
-import TagModule from "./res/tag/tag.module";
+import { UserModule } from "./res/user/user.module";
+import { AuthModule } from "./res/auth/auth.module";
+import { BookmarkModule } from "./res/bookmark/bookmark.module";
+import { CategoryModule } from "./res/category/category.module";
+import { TagModule } from "./res/tag/tag.module";
 
 @Module({
   imports: [
@@ -41,4 +41,4 @@ import TagModule from "./res/tag/tag.module";
   controllers: [AppController],
   providers: [AppService],
 })
-export default class AppModule {}
+export class AppModule {}

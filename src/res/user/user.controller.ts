@@ -1,10 +1,10 @@
 import { Controller, Post, Body, HttpException, HttpStatus, HttpCode } from "@nestjs/common";
 import { Public } from "src/decorators/public.decorator";
-import UserService from "./user.service";
-import RegisterDto from "./dto/register.dto";
+import { UserService } from "./user.service";
+import { RegisterDto } from "./dto/register-user.dto";
 
 @Controller("user")
-export default class UserController {
+export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Public()
@@ -14,7 +14,7 @@ export default class UserController {
       throw new HttpException("Anonymous ID is required", HttpStatus.BAD_REQUEST);
     }
 
-    const user = await this.userService.registerAnonymous(registrationData.anonymousId);
+    const user = await this.userService.registerByAnonymous(registrationData.anonymousId);
 
     // 테스트 용도, 추후에 변경 (굳이 리턴할 필요 없음)
     return {

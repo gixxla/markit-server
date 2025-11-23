@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import TagService from "./tag.service";
-import TagController from "./tag.controller";
-import Tag from "../entities/tag.entity";
-import BookmarkTag from "../entities/bookmark-tag.entity";
+import { TagService } from "./tag.service";
+import { TagController } from "./tag.controller";
+import { Tag } from "../entities/tag.entity";
+import { BookmarkTag } from "../entities/bookmark-tag.entity";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Tag, BookmarkTag])],
@@ -11,4 +11,4 @@ import BookmarkTag from "../entities/bookmark-tag.entity";
   providers: [TagService],
   exports: [TagService],
 })
-export default class TagModule {}
+export class TagModule {}

@@ -1,38 +1,37 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import Category from "../entities/category.entity";
-import User from "../entities/user.entity";
-import CreateCategoryDto from "./dto/create-category.dto";
-import UpdateCategoryDto from "./dto/update-category.dto";
+import { Category } from "../entities/category.entity";
+import { User } from "../entities/user.entity";
+import { CreateCategoryDto } from "./dto/create-category.dto";
+import { UpdateCategoryDto } from "./dto/update-category.dto";
 
 @Injectable()
-export default class CategoryService {
+export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
   async create(user: User, createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const category = this.categoryRepository.create({
+    const newcategory = this.categoryRepository.create({
       ...createCategoryDto,
-      user,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
-    return this.categoryRepository.save(category);
+    return this.categoryRepository.save(newcategory);
   }
 
   async findAll(user: User): Promise<Category[]> {
     return this.categoryRepository.find({
-      where: { userId: Number(user.id) },
+      where: { userId: user.id },
       order: { createdAt: "DESC" },
     });
   }
 
-  async update(userId: string, categoryId: number, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+  async update(userId: string, categoryId: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
     const category = await this.categoryRepository.findOne({
-      where: { id: String(categoryId) },
+      where: { id: categoryId },
       relations: ["user"],
     });
 
@@ -46,12 +45,12 @@ export default class CategoryService {
 
     await this.categoryRepository.update(categoryId, updateCategoryDto);
 
-    return this.categoryRepository.findOne({ where: { id: String(categoryId) } }) as Promise<Category>;
+    return this.categoryRepository.findOne({ where: { id: categoryId } }) as Promise<Category>;
   }
 
-  async delete(userId: string, categoryId: number): Promise<void> {
+  async delete(userId: string, categoryId: string): Promise<void> {
     const category = await this.categoryRepository.findOne({
-      where: { id: String(categoryId) },
+      where: { id: categoryId },
       relations: ["user"],
     });
 
@@ -66,9 +65,9 @@ export default class CategoryService {
     await this.categoryRepository.delete(categoryId);
   }
 
-  async validateCategory(userId: string, categoryId: number): Promise<Category> {
+  async validate(userId: string, categoryId: string): Promise<Category> {
     const category = await this.categoryRepository.findOne({
-      where: { id: String(categoryId), userId: Number(userId) },
+      where: { id: categoryId, userId },
     });
 
     if (!category) {

@@ -1,7 +1,6 @@
-import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, IsUrl } from "class-validator";
-import { Type } from "class-transformer";
+import { IsArray, IsBoolean, IsOptional, IsString, IsUrl } from "class-validator";
 
-export default class UpdateBookmarkDto {
+export class UpdateBookmarkDto {
   @IsOptional()
   @IsUrl({}, { message: "URL 형식이 유효하지 않습니다." })
   url?: string;
@@ -15,9 +14,8 @@ export default class UpdateBookmarkDto {
   isReadLater?: boolean;
 
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  categoryId?: number;
+  @IsString()
+  categoryId?: string;
 
   @IsOptional()
   @IsArray()

@@ -1,19 +1,19 @@
 /* eslint-disable import/no-cycle */
 import { Entity, Column, OneToMany, ManyToOne, OneToOne, JoinColumn } from "typeorm";
-import CommonEntity from "./common.entity";
-import User from "./user.entity";
-import Category from "./category.entity";
-import BookmarkTag from "./bookmark-tag.entity";
-import OfflineBookmark from "./offline-bookmark.entity";
+import { CommonEntity } from "./common.entity";
+import { User } from "./user.entity";
+import { Category } from "./category.entity";
+import { BookmarkTag } from "./bookmark-tag.entity";
+import { OfflineBookmark } from "./offline-bookmark.entity";
 
 @Entity("bookmark")
-export default class Bookmark extends CommonEntity {
+export class Bookmark extends CommonEntity {
   @ManyToOne(() => User, (user) => user.tags)
   @JoinColumn({ name: "user_id" })
   user: User;
 
   @Column({ name: "user_id" })
-  userId: number;
+  userId: string;
 
   @Column({ type: "text" })
   url: string;
@@ -26,7 +26,7 @@ export default class Bookmark extends CommonEntity {
   category: Category;
 
   @Column({ name: "category_id", nullable: true })
-  categoryId: number;
+  categoryId: string;
 
   @Column({ name: "is_read_later", type: "boolean", default: true })
   isReadLater: boolean;

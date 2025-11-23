@@ -1,12 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
-import CategoryService from "./category.service";
-import CreateCategoryDto from "./dto/create-category.dto";
-import UpdateCategoryDto from "./dto/update-category.dto";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from "@nestjs/common";
+import { CategoryService } from "./category.service";
+import { CreateCategoryDto } from "./dto/create-category.dto";
+import { UpdateCategoryDto } from "./dto/update-category.dto";
+import { User } from "../entities/user.entity";
 import UserDeco from "../../decorators/user.decorator";
-import User from "../entities/user.entity";
 
 @Controller("category")
-export default class CategoryController {
+export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
@@ -20,13 +20,13 @@ export default class CategoryController {
   }
 
   @Patch(":id")
-  update(@UserDeco() user: User, @Param("id", ParseIntPipe) id: number, @Body() updateCategoryDto: UpdateCategoryDto) {
+  update(@UserDeco() user: User, @Param("id") id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoryService.update(user.id, id, updateCategoryDto);
   }
 
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@UserDeco() user: User, @Param("id", ParseIntPipe) id: number) {
+  delete(@UserDeco() user: User, @Param("id") id: string) {
     return this.categoryService.delete(user.id, id);
   }
 }

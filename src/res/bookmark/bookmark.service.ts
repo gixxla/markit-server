@@ -4,17 +4,17 @@ import { Repository } from "typeorm";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
-import Bookmark from "../entities/bookmark.entity";
-import BookmarkTag from "../entities/bookmark-tag.entity";
-import User from "../entities/user.entity";
-import CreateBookmarkDto from "./dto/create-bookmark.dto";
-import GetBookmarksDto from "./dto/get-bookmarks.dto";
-import UpdateBookmarkDto from "./dto/update-bookmark.dto";
-import TagService from "../tag/tag.service";
-import CategoryService from "../category/category.service";
+import { Bookmark } from "../entities/bookmark.entity";
+import { BookmarkTag } from "../entities/bookmark-tag.entity";
+import { User } from "../entities/user.entity";
+import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
+import { GetBookmarksDto } from "./dto/get-bookmarks.dto";
+import { UpdateBookmarkDto } from "./dto/update-bookmark.dto";
+import { TagService } from "../tag/tag.service";
+import { CategoryService } from "../category/category.service";
 
 @Injectable()
-export default class BookmarkService {
+export class BookmarkService {
   constructor(
     @InjectRepository(Bookmark)
     private readonly bookmarkRepository: Repository<Bookmark>,
@@ -42,15 +42,15 @@ export default class BookmarkService {
     }
   }
 
-  async createBookmark(user: User, createBookmarkDto: CreateBookmarkDto): Promise<Bookmark> {
+  async create(user: User, createBookmarkDto: CreateBookmarkDto): Promise<Bookmark> {
     const { url, title, tags, categoryId } = createBookmarkDto;
 
     if (categoryId) {
-      await this.categoryService.validateCategory(user.id, categoryId);
+      await this.categoryService.validate(user.id, categoryId);
     }
 
     const newBookmark = this.bookmarkRepository.create({
-      user,
+      userId: user.id,
       url,
       title,
       isReadLater: true,
@@ -64,8 +64,8 @@ export default class BookmarkService {
         const tag = await this.tagService.findOrCreateByName(user.id, tagName);
 
         return this.bookmarkTagRepository.create({
-          bookmarkId: Number(savedBookmark.id),
-          tagId: Number(tag.id),
+          bookmarkId: savedBookmark.id,
+          tagId: tag.id,
         });
       });
 
@@ -76,7 +76,7 @@ export default class BookmarkService {
     return savedBookmark;
   }
 
-  async GetBookmarks(user: User, dto: GetBookmarksDto) {
+  async findAll(user: User, dto: GetBookmarksDto) {
     const { limit = 20, cursor, tag, categoryId } = dto;
 
     const query = this.bookmarkRepository
@@ -126,13 +126,17 @@ export default class BookmarkService {
     };
   }
 
-  async updateBookmark(userId: string, bookmarkId: number, updateDto: UpdateBookmarkDto): Promise<Bookmark> {
-    const { tags, ...dataToUpdate } = updateDto;
+  async update(userId: string, bookmarkId: string, updateDto: UpdateBookmarkDto): Promise<Bookmark> {
+    const { tags, ...data } = updateDto;
 
     const bookmark = await this.bookmarkRepository.findOne({
-      where: { id: String(bookmarkId) },
+      where: { id: bookmarkId },
       relations: ["user"],
     });
+
+    const dataToUpdate = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined),
+    ) as Partial<Bookmark>;
 
     if (!bookmark) {
       throw new NotFoundException("북마크를 찾을 수 없습니다.");
@@ -143,7 +147,7 @@ export default class BookmarkService {
     }
 
     if (dataToUpdate.categoryId) {
-      await this.categoryService.validateCategory(userId, dataToUpdate.categoryId);
+      await this.categoryService.validate(userId, dataToUpdate.categoryId);
     }
 
     if (Object.keys(dataToUpdate).length > 0) {
@@ -157,8 +161,8 @@ export default class BookmarkService {
         const tag = await this.tagService.findOrCreateByName(userId, tagName);
 
         return this.bookmarkTagRepository.create({
-          bookmarkId: Number(bookmarkId),
-          tagId: Number(tag.id),
+          bookmarkId,
+          tagId: tag.id,
         });
       });
 
@@ -167,14 +171,14 @@ export default class BookmarkService {
     }
 
     return this.bookmarkRepository.findOne({
-      where: { id: String(bookmarkId) },
+      where: { id: bookmarkId },
       relations: ["bookmarkTags", "bookmarkTags.tag", "category"],
     }) as Promise<Bookmark>;
   }
 
-  async deleteBookmark(userId: string, bookmarkId: number): Promise<void> {
+  async delete(userId: string, bookmarkId: string): Promise<void> {
     const bookmark = await this.bookmarkRepository.findOne({
-      where: { id: String(bookmarkId) },
+      where: { id: bookmarkId },
       relations: ["user"],
     });
 
