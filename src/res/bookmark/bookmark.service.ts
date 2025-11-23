@@ -194,6 +194,23 @@ export class BookmarkService {
     await this.bookmarkRepository.delete(bookmarkId);
   }
 
+  async updateLastAccessedAt(userId: string, bookmarkId: string): Promise<void> {
+    const bookmark = await this.bookmarkRepository.findOne({
+      where: { id: bookmarkId },
+      relations: ["user"],
+    });
+
+    if (!bookmark) {
+      throw new NotFoundException("북마크를 찾을 수 없습니다.");
+    }
+
+    if (bookmark.user.id !== userId) {
+      throw new ForbiddenException("이 북마크에 접근할 권한이 없습니다.");
+    }
+
+    await this.bookmarkRepository.update(bookmarkId, { lastAccessedAt: new Date() });
+  }
+
   async migrate(user: User, localBookmarkDto: LocalBookmarkDto): Promise<Bookmark> {
     const { url, title, tags, categoryName } = localBookmarkDto;
 

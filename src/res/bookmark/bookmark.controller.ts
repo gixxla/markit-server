@@ -56,4 +56,10 @@ export class BookmarkController {
   async deleteBookmark(@UserDeco() user: User, @Param("id") id: string) {
     return this.bookmarkService.delete(user.id, id);
   }
+
+  @Patch(":id/access")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateAccessTime(@UserDeco() user: User, @Param("id") id: string) {
+    await this.bookmarkService.updateLastAccessedAt(user.id, id);
+  }
 }
