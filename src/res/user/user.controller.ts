@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpException, HttpStatus, HttpCode } from "@nestjs/common";
 import { Public } from "src/decorators/public.decorator";
 import UserService from "./user.service";
-import RegisterDto from "./register.dto";
+import RegisterDto from "./dto/register.dto";
 
 @Controller("user")
 export default class UserController {

@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import User from "../entities/user.entity";
-import RegisterDto from "./register.dto";
+import RegisterDto from "./dto/register.dto";
 
 @Injectable()
 export default class UserService {
