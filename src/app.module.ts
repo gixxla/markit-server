@@ -7,6 +7,7 @@ import { AppService } from "./app.service";
 import UserModule from "./res/user/user.module";
 import AuthModule from "./res/auth/auth.module";
 import BookmarkModule from "./res/bookmark/bookmark.module";
+import CategoryModule from "./res/category/category.module";
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import BookmarkModule from "./res/bookmark/bookmark.module";
     UserModule,
     AuthModule,
     BookmarkModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

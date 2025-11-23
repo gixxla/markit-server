@@ -8,8 +8,8 @@ import Bookmark from "../entities/bookmark.entity";
 import Tag from "../entities/tag.entity";
 import BookmarkTag from "../entities/bookmark-tag.entity";
 import User from "../entities/user.entity";
-import CreateBookmarkDto from "./create-bookmark.dto";
-import GetBookmarksDto from "./get-bookmarks.dto";
+import CreateBookmarkDto from "./dto/create-bookmark.dto";
+import GetBookmarksDto from "./dto/get-bookmarks.dto";
 import UpdateBookmarkDto from "./update-bookmark.dto";
 
 @Injectable()
