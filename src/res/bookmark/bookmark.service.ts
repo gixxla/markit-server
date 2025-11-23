@@ -12,6 +12,7 @@ import { GetBookmarksDto } from "./dto/get-bookmarks.dto";
 import { UpdateBookmarkDto } from "./dto/update-bookmark.dto";
 import { TagService } from "../tag/tag.service";
 import { CategoryService } from "../category/category.service";
+import { LocalBookmarkDto } from "../auth/dto/local-bookmark.dto";
 
 @Injectable()
 export class BookmarkService {
@@ -191,5 +192,43 @@ export class BookmarkService {
     }
 
     await this.bookmarkRepository.delete(bookmarkId);
+  }
+
+  async migrate(user: User, localBookmarkDto: LocalBookmarkDto): Promise<Bookmark> {
+    const { url, title, tags, categoryName } = localBookmarkDto;
+
+    let categoryId: string | undefined;
+    if (categoryName) {
+      const category = await this.categoryService.findOrCreateByName(user.id, categoryName);
+      if (category) {
+        categoryId = category.id;
+      }
+    }
+
+    const newBookmark = this.bookmarkRepository.create({
+      userId: user.id,
+      url,
+      title,
+      isReadLater: true,
+      categoryId,
+    });
+
+    const savedBookmark = await this.bookmarkRepository.save(newBookmark);
+
+    if (tags && tags.length > 0) {
+      const tagPromises = tags.map(async (tagName) => {
+        const tag = await this.tagService.findOrCreateByName(user.id, tagName);
+
+        return this.bookmarkTagRepository.create({
+          bookmarkId: savedBookmark.id,
+          tagId: tag.id,
+        });
+      });
+
+      const newBookmarkTags = await Promise.all(tagPromises);
+      await this.bookmarkTagRepository.save(newBookmarkTags);
+    }
+
+    return savedBookmark;
   }
 }

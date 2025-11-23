@@ -76,4 +76,20 @@ export class CategoryService {
 
     return category;
   }
+
+  async findOrCreateByName(userId: string, categoryName: string): Promise<Category> {
+    let category = await this.categoryRepository.findOne({
+      where: { name: categoryName, userId },
+    });
+
+    if (!category) {
+      category = this.categoryRepository.create({
+        name: categoryName,
+        userId,
+      });
+      category = await this.categoryRepository.save(category);
+    }
+
+    return category;
+  }
 }

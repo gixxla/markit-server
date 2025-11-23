@@ -3,12 +3,15 @@ import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "../user/user.service";
 import { User } from "../entities/user.entity";
+import { BookmarkService } from "../bookmark/bookmark.service";
+import { MigrateDto } from "./dto/migrate.dto";
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private bookmarkService: BookmarkService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<Partial<User>> {
@@ -35,5 +38,16 @@ export class AuthService {
   async getAccessToken(user: Partial<User>) {
     const payload = { email: user.email, sub: user.id };
     return { accessToken: this.jwtService.sign(payload) };
+  }
+
+  async migrateData(user: User, migrateDto: MigrateDto): Promise<void> {
+    const { bookmarks } = migrateDto;
+
+    if (bookmarks.length === 0) {
+      return;
+    }
+
+    const migrationPromises = bookmarks.map((localBookmark) => this.bookmarkService.migrate(user, localBookmark));
+    await Promise.all(migrationPromises);
   }
 }

@@ -4,12 +4,14 @@ import { FindOptionsWhere, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { User } from "../entities/user.entity";
 import { RegisterDto } from "./dto/register-user.dto";
+import { BookmarkService } from "../bookmark/bookmark.service";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private bookmarkService: BookmarkService,
   ) {}
 
   async registerByAnonymous(anonymousId: string): Promise<User> {
@@ -36,7 +38,7 @@ export class UserService {
   }
 
   async register(registerDto: RegisterDto): Promise<User> {
-    const { anonymousId, email, password } = registerDto;
+    const { anonymousId, email, password, localBookmarks } = registerDto;
 
     const existingEmail = await this.userRepository.findOne({ where: { email } });
     if (existingEmail) {
@@ -59,11 +61,16 @@ export class UserService {
     });
 
     try {
-      await this.userRepository.save(newUser);
-      // 데이터 마이그레이션
-      return newUser;
+      const savedUser = await this.userRepository.save(newUser);
+
+      if (localBookmarks && localBookmarks.length > 0) {
+        const migrationPromises = localBookmarks.map((localBookmark) =>
+          this.bookmarkService.migrate(savedUser, localBookmark),
+        );
+        await Promise.all(migrationPromises);
+      }
+      return savedUser;
     } catch (error) {
-      // 데이터베이스 오류 처리
       throw new ConflictException("회원가입 중 오류가 발생했습니다.");
     }
   }

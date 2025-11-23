@@ -13,5 +13,6 @@ import { CategoryModule } from "../category/category.module";
   imports: [TypeOrmModule.forFeature([Bookmark, Tag, BookmarkTag, User]), CategoryModule, TagModule],
   controllers: [BookmarkController],
   providers: [BookmarkService],
+  exports: [BookmarkService],
 })
 export class BookmarkModule {}

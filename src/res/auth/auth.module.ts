@@ -10,10 +10,12 @@ import { UserModule } from "../user/user.module";
 import { LocalStrategy } from "./strategies/local.strategy";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
+import { BookmarkModule } from "../bookmark/bookmark.module";
 
 @Module({
   imports: [
     UserModule,
+    BookmarkModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
