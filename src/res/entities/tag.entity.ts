@@ -16,6 +16,9 @@ export class Tag extends CommonEntity {
   @Column({ type: "varchar", length: 100 })
   name: string;
 
+  @Column({ name: "color_code", type: "varchar", length: 10 })
+  colorCode: string;
+
   @OneToMany(() => BookmarkTag, (bookmarkTag) => bookmarkTag.tag)
   bookmarkTags: BookmarkTag[];
 }
