@@ -6,6 +6,26 @@ import { User } from "../entities/user.entity";
 import { CreateTagDto } from "./dto/create-tag.dto";
 import { UpdateTagDto } from "./dto/update-tag.dto";
 
+const TAG_COLORS = [
+  "#9CA3AF", // Cool Grey
+  "#8E5252", // Muted Marsala
+  "#9A634E", // Burnt Sienna
+  "#947C49", // Antique Gold
+  "#556B52", // Olive Drab
+  "#456B68", // Deep Sea
+  "#4A6075", // Slate Blue
+  "#565372", // Dusty Indigo
+  "#705263", // Old Plum
+  "#6B5B52", // Walnut
+  "#4B5563", // Gray Blue
+  "#323232", // Soft Black
+];
+
+function getRandomColor(): string {
+  const randomIndex = Math.floor(Math.random() * TAG_COLORS.length);
+  return TAG_COLORS[randomIndex];
+}
+
 @Injectable()
 export class TagService {
   constructor(
@@ -14,7 +34,7 @@ export class TagService {
   ) {}
 
   async create(user: User, createTagDto: CreateTagDto): Promise<Tag> {
-    const { name } = createTagDto;
+    const { name, colorCode } = createTagDto;
 
     const existingtag = await this.tagRepository.findOne({
       where: { name, userId: user.id },
@@ -25,6 +45,7 @@ export class TagService {
 
     const newTag = this.tagRepository.create({
       name,
+      colorCode: colorCode || getRandomColor(),
       userId: user.id,
     });
 
@@ -93,6 +114,7 @@ export class TagService {
       tag = this.tagRepository.create({
         name: tagName,
         userId,
+        colorCode: getRandomColor(),
       });
       tag = await this.tagRepository.save(tag);
     }

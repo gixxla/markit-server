@@ -74,16 +74,20 @@ export class BookmarkService {
       await this.bookmarkTagRepository.save(newBookmarkTags);
     }
 
-    return savedBookmark;
+    return this.bookmarkRepository.findOne({
+      where: { id: savedBookmark.id },
+      relations: ["bookmarkTags", "bookmarkTags.tag", "category"],
+    }) as Promise<Bookmark>;
   }
 
   async findAll(user: User, dto: GetBookmarksDto) {
-    const { limit = 20, cursor, tag, categoryId } = dto;
+    const { limit = 20, cursor, tagName, categoryName } = dto;
 
     const query = this.bookmarkRepository
       .createQueryBuilder("bookmark")
       .leftJoinAndSelect("bookmark.bookmarkTags", "bookmarkTags")
       .leftJoinAndSelect("bookmarkTags.tag", "tag")
+      .leftJoinAndSelect("bookmark.category", "category")
       .where("bookmark.userId = :userId", { userId: user.id })
       .orderBy("bookmark.id", "DESC")
       .take(limit + 1);
@@ -92,12 +96,12 @@ export class BookmarkService {
       query.andWhere("bookmark.id < :cursor", { cursor });
     }
 
-    if (tag) {
-      query.andWhere("tag.name = :tagName", { tagName: tag });
+    if (tagName) {
+      query.andWhere("tag.name = :tagName", { tagName });
     }
 
-    if (categoryId) {
-      query.andWhere("bookmark.categoryId = :categoryId", { categoryId });
+    if (categoryName) {
+      query.andWhere("category.name = :categoryName", { categoryName });
     }
 
     const bookmarks = await query.getMany();
@@ -115,6 +119,7 @@ export class BookmarkService {
       ...bm,
       tags: bm.bookmarkTags.map((bt) => bt.tag.name),
       bookmarkTags: undefined,
+      category: bm.category?.name,
     }));
 
     return {

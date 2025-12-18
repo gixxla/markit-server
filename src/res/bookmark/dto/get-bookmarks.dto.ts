@@ -14,9 +14,9 @@ export class GetBookmarksDto {
 
   @IsOptional()
   @IsString()
-  categoryId?: string;
+  categoryName?: string;
 
   @IsOptional()
   @IsString()
-  tag?: string;
+  tagName?: string;
 }
