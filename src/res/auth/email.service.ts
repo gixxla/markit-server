@@ -24,8 +24,7 @@ export class EmailService {
       subject: `"Mark-it! 인증 코드는 ${code}입니다."`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h3>이메일 인증</h3>
-          <br>
+          <h2>이메일 인증</h2>
           <p>이 메일은 Mark-it! 회원 가입을 위해 발송되었습니다.<br>귀하의 인증 코드는 아래와 같습니다.</p>
           <div style="background-color: #f4f4f4; padding: 20px; text-align: center; border-radius: 10px; margin: 20px 0;">
             <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #333;">${code}</span>

@@ -48,20 +48,40 @@ export class UserService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Repository.save가 update로 동작하는 기준은 PK이므로, 해당 회원의 PK를 검색한다.
-    const user = await this.userRepository.findOne({ where: { anonymousId } });
+    let user: User;
 
-    const newUser = this.userRepository.create({
-      id: user?.id,
-      anonymousId,
-      email,
-      hashedPassword,
-      isRegistered: true,
-      lastActiveAt: new Date(),
-    });
+    if (anonymousId) {
+      const anonymousUser = await this.userRepository.findOne({ where: { anonymousId } });
+
+      if (anonymousUser) {
+        user = this.userRepository.create({
+          ...anonymousUser,
+          email,
+          hashedPassword,
+          isRegistered: true,
+          lastActiveAt: new Date(),
+        });
+      } else {
+        user = this.userRepository.create({
+          anonymousId,
+          email,
+          hashedPassword,
+          isRegistered: true,
+          lastActiveAt: new Date(),
+        });
+      }
+    } else {
+      user = this.userRepository.create({
+        anonymousId: null,
+        email,
+        hashedPassword,
+        isRegistered: true,
+        lastActiveAt: new Date(),
+      });
+    }
 
     try {
-      const savedUser = await this.userRepository.save(newUser);
+      const savedUser = await this.userRepository.save(user);
 
       if (localBookmarks && localBookmarks.length > 0) {
         const migrationPromises = localBookmarks.map((localBookmark) =>
@@ -71,6 +91,7 @@ export class UserService {
       }
       return savedUser;
     } catch (error) {
+      console.error(error);
       throw new ConflictException("회원가입 중 오류가 발생했습니다.");
     }
   }

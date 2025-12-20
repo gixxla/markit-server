@@ -21,7 +21,6 @@ export class UserController {
 
     const user = await this.userService.registerByAnonymous(registrationData.anonymousId);
 
-    // 테스트 용도, 추후에 변경 (굳이 리턴할 필요 없음)
     return {
       id: user.id,
       anonymousId: user.anonymousId,
@@ -36,13 +35,14 @@ export class UserController {
   async register(@Body() registerDto: RegisterDto) {
     await this.authService.verifyCode(registerDto.email, registerDto.verificationCode);
     const user = await this.userService.register(registerDto);
+    const { accessToken } = await this.authService.getAccessToken(user);
 
-    // 테스트 용도, 추후에 변경 (굳이 리턴할 필요 없음)
     return {
       id: user.id,
       email: user.email,
       isRegistered: user.isRegistered,
       createdAt: user.createdAt,
+      accessToken,
     };
   }
 }

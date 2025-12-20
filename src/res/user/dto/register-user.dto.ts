@@ -1,11 +1,11 @@
 import { Type } from "class-transformer";
-import { IsEmail, IsNotEmpty, IsString, MinLength, IsUUID, IsArray, ValidateNested } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, MinLength, IsUUID, IsArray, ValidateNested, IsOptional } from "class-validator";
 import { LocalBookmarkDto } from "src/res/auth/dto/local-bookmark.dto";
 
 export class RegisterDto {
+  @IsOptional()
   @IsUUID()
-  @IsNotEmpty()
-  anonymousId: string;
+  anonymousId?: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -21,6 +21,7 @@ export class RegisterDto {
   verificationCode: string;
 
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => LocalBookmarkDto)
   localBookmarks: LocalBookmarkDto[];
