@@ -1,4 +1,4 @@
-import { Controller, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
 import { Public } from "src/decorators/public.decorator";
 import { AuthService } from "./auth.service";
 import { LocalAuthGuard } from "./guards/local-auth.guard";
@@ -14,5 +14,12 @@ export class AuthController {
     const user = req?.user;
 
     return this.authService.getAccessToken(user);
+  }
+
+  @Public()
+  @Post("verification")
+  async sendVerificationCode(@Body("email") email: string) {
+    await this.authService.sendVerificationCode(email);
+    return { message: "인증 코드가 발송되었습니다." };
   }
 }

@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -11,10 +11,11 @@ import { LocalStrategy } from "./strategies/local.strategy";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { BookmarkModule } from "../bookmark/bookmark.module";
+import { EmailService } from "./email.service";
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
     BookmarkModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync({
@@ -29,6 +30,7 @@ import { BookmarkModule } from "../bookmark/bookmark.module";
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, { provide: APP_GUARD, useClass: JwtAuthGuard }],
+  providers: [AuthService, EmailService, LocalStrategy, JwtStrategy, { provide: APP_GUARD, useClass: JwtAuthGuard }],
+  exports: [AuthService],
 })
 export class AuthModule {}
