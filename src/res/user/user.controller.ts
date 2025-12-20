@@ -30,6 +30,14 @@ export class UserController {
   }
 
   @Public()
+  @Post("check-email")
+  @HttpCode(HttpStatus.OK)
+  async checkEmail(@Body("email") email: string) {
+    await this.userService.checkDuplicateEmail(email);
+    return { isAvailable: true };
+  }
+
+  @Public()
   @Post("register")
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto) {

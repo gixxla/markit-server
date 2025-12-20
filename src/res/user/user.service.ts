@@ -96,6 +96,13 @@ export class UserService {
     }
   }
 
+  async checkDuplicateEmail(email: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (user) {
+      throw new ConflictException("이미 가입된 이메일입니다.");
+    }
+  }
+
   async findOne(criteria: FindOptionsWhere<User>): Promise<User | null> {
     return this.userRepository.findOne({ where: criteria });
   }

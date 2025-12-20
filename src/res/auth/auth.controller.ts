@@ -18,7 +18,7 @@ export class AuthController {
   }
 
   @Public()
-  @Post("verification")
+  @Post("send-code")
   async sendVerificationCode(@Body("email") email: string) {
     await this.authService.sendVerificationCode(email);
     return { message: "인증 코드가 발송되었습니다." };
