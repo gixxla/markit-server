@@ -1,8 +1,10 @@
+import * as path from "path";
+
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import * as path from "path";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_INTERCEPTOR } from "@nestjs/core";
+
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserModule } from "./res/user/user.module";

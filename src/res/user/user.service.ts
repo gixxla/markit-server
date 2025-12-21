@@ -14,31 +14,31 @@ export class UserService {
     private bookmarkService: BookmarkService,
   ) {}
 
-  async registerByAnonymous(anonymousId: string): Promise<User> {
-    let newUser = await this.userRepository.findOne({ where: { anonymousId } });
+  async registerByGuest(guestId: string): Promise<User> {
+    let user = await this.userRepository.findOne({ where: { guestId } });
 
-    if (newUser) {
-      newUser.lastActiveAt = new Date();
-      await this.userRepository.save(newUser);
-      return newUser;
+    if (user) {
+      user.lastActiveAt = new Date();
+      await this.userRepository.save(user);
+      return user;
     }
 
-    newUser = this.userRepository.create({
-      anonymousId,
+    user = this.userRepository.create({
+      guestId,
       isRegistered: false,
       lastActiveAt: new Date(),
     });
 
     try {
-      await this.userRepository.save(newUser);
-      return newUser;
+      await this.userRepository.save(user);
+      return user;
     } catch (error) {
       throw new ConflictException("통신 중 오류가 발생했습니다.");
     }
   }
 
   async register(registerDto: RegisterDto): Promise<User> {
-    const { anonymousId, email, password, localBookmarks } = registerDto;
+    const { guestId, email, password, localBookmarks } = registerDto;
 
     const existingEmail = await this.userRepository.findOne({ where: { email } });
     if (existingEmail) {
@@ -50,12 +50,12 @@ export class UserService {
 
     let user: User;
 
-    if (anonymousId) {
-      const anonymousUser = await this.userRepository.findOne({ where: { anonymousId } });
+    if (guestId) {
+      const guestUser = await this.userRepository.findOne({ where: { guestId } });
 
-      if (anonymousUser) {
+      if (guestUser) {
         user = this.userRepository.create({
-          ...anonymousUser,
+          ...guestUser,
           email,
           hashedPassword,
           isRegistered: true,
@@ -63,7 +63,7 @@ export class UserService {
         });
       } else {
         user = this.userRepository.create({
-          anonymousId,
+          guestId,
           email,
           hashedPassword,
           isRegistered: true,
@@ -72,7 +72,7 @@ export class UserService {
       }
     } else {
       user = this.userRepository.create({
-        anonymousId: null,
+        guestId: null,
         email,
         hashedPassword,
         isRegistered: true,

@@ -13,17 +13,17 @@ export class UserController {
   ) {}
 
   @Public()
-  @Post("anonymous")
-  async registerAnonymous(@Body() registrationData: { anonymousId: string }) {
-    if (!registrationData.anonymousId) {
-      throw new HttpException("Anonymous ID is required", HttpStatus.BAD_REQUEST);
+  @Post("guest")
+  async registerByGuest(@Body() registrationData: { guestId: string }) {
+    if (!registrationData.guestId) {
+      throw new HttpException("Guest ID is required", HttpStatus.BAD_REQUEST);
     }
 
-    const user = await this.userService.registerByAnonymous(registrationData.anonymousId);
+    const user = await this.userService.registerByGuest(registrationData.guestId);
 
     return {
       id: user.id,
-      anonymousId: user.anonymousId,
+      guestId: user.guestId,
       isRegistered: user.isRegistered,
       createdAt: user.createdAt,
     };

@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { verifyAuthorization } from "src/common/helpers/authorization.helper";
 import { Category } from "../entities/category.entity";
 import { User } from "../entities/user.entity";
 import { CreateCategoryDto } from "./dto/create-category.dto";
@@ -30,18 +31,7 @@ export class CategoryService {
   }
 
   async update(userId: string, categoryId: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
-    const category = await this.categoryRepository.findOne({
-      where: { id: categoryId },
-      relations: ["user"],
-    });
-
-    if (!category) {
-      throw new NotFoundException("카테고리를 찾을 수 없습니다.");
-    }
-
-    if (category.user.id !== userId) {
-      throw new ForbiddenException("이 카테고리를 수정할 권한이 없습니다.");
-    }
+    await verifyAuthorization(this.categoryRepository, categoryId, userId, "카테고리");
 
     await this.categoryRepository.update(categoryId, updateCategoryDto);
 
@@ -49,18 +39,7 @@ export class CategoryService {
   }
 
   async delete(userId: string, categoryId: string): Promise<void> {
-    const category = await this.categoryRepository.findOne({
-      where: { id: categoryId },
-      relations: ["user"],
-    });
-
-    if (!category) {
-      throw new NotFoundException("카테고리를 찾을 수 없습니다.");
-    }
-
-    if (category.user.id !== userId) {
-      throw new ForbiddenException("이 카테고리를 삭제할 권한이 없습니다.");
-    }
+    await verifyAuthorization(this.categoryRepository, categoryId, userId, "카테고리");
 
     await this.categoryRepository.delete(categoryId);
   }

@@ -5,6 +5,7 @@ import { Tag } from "../entities/tag.entity";
 import { User } from "../entities/user.entity";
 import { CreateTagDto } from "./dto/create-tag.dto";
 import { UpdateTagDto } from "./dto/update-tag.dto";
+import { verifyAuthorization } from "src/common/helpers/authorization.helper";
 
 const TAG_COLORS = [
   "#9CA3AF", // Cool Grey
@@ -60,18 +61,7 @@ export class TagService {
   }
 
   async update(userId: string, tagId: string, updateTagDto: UpdateTagDto): Promise<Tag> {
-    const tag = await this.tagRepository.findOne({
-      where: { id: tagId },
-      relations: ["user"],
-    });
-
-    if (!tag) {
-      throw new NotFoundException("태그를 찾을 수 없습니다.");
-    }
-
-    if (tag.user.id !== userId) {
-      throw new ForbiddenException("이 태그를 수정할 권한이 없습니다.");
-    }
+    const tag = await verifyAuthorization(this.tagRepository, tagId, userId, "태그");
 
     if (updateTagDto.name && updateTagDto.name !== tag.name) {
       const existingConflict = await this.tagRepository.findOne({
@@ -89,18 +79,7 @@ export class TagService {
   }
 
   async delete(userId: string, tagId: string): Promise<void> {
-    const tag = await this.tagRepository.findOne({
-      where: { id: tagId },
-      relations: ["user"],
-    });
-
-    if (!tag) {
-      throw new NotFoundException("태그를 찾을 수 없습니다.");
-    }
-
-    if (tag.user.id !== userId) {
-      throw new ForbiddenException("이 태그를 삭제할 권한이 없습니다.");
-    }
+    await verifyAuthorization(this.tagRepository, tagId, userId, "태그");
 
     await this.tagRepository.delete(tagId);
   }

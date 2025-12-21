@@ -5,7 +5,7 @@ import { LocalBookmarkDto } from "src/res/auth/dto/local-bookmark.dto";
 export class RegisterDto {
   @IsOptional()
   @IsUUID()
-  anonymousId?: string;
+  guestId?: string;
 
   @IsEmail()
   @IsNotEmpty()

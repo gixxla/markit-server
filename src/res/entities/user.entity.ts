@@ -7,8 +7,8 @@ import { Tag } from "./tag.entity";
 
 @Entity("user")
 export class User extends CommonEntity {
-  @Column({ name: "anonymous_id", type: "uuid", unique: true, nullable: true })
-  anonymousId: string | null;
+  @Column({ name: "guest_id", type: "uuid", unique: true, nullable: true })
+  guestId: string | null;
 
   @Column({ type: "varchar", nullable: true, unique: true })
   email: string | null;

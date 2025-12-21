@@ -13,6 +13,7 @@ import { UpdateBookmarkDto } from "./dto/update-bookmark.dto";
 import { TagService } from "../tag/tag.service";
 import { CategoryService } from "../category/category.service";
 import { LocalBookmarkDto } from "../auth/dto/local-bookmark.dto";
+import { verifyAuthorization } from "../../common/helpers/authorization.helper";
 
 @Injectable()
 export class BookmarkService {
@@ -135,22 +136,11 @@ export class BookmarkService {
   async update(userId: string, bookmarkId: string, updateDto: UpdateBookmarkDto): Promise<Bookmark> {
     const { tags, ...data } = updateDto;
 
-    const bookmark = await this.bookmarkRepository.findOne({
-      where: { id: bookmarkId },
-      relations: ["user"],
-    });
+    const bookmark = await verifyAuthorization(this.bookmarkRepository, bookmarkId, userId, "북마크");
 
     const dataToUpdate = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined),
     ) as Partial<Bookmark>;
-
-    if (!bookmark) {
-      throw new NotFoundException("북마크를 찾을 수 없습니다.");
-    }
-
-    if (bookmark.user.id !== userId) {
-      throw new ForbiddenException("이 북마크를 수정할 권한이 없습니다.");
-    }
 
     if (dataToUpdate.categoryId) {
       await this.categoryService.validate(userId, dataToUpdate.categoryId);
@@ -183,35 +173,13 @@ export class BookmarkService {
   }
 
   async delete(userId: string, bookmarkId: string): Promise<void> {
-    const bookmark = await this.bookmarkRepository.findOne({
-      where: { id: bookmarkId },
-      relations: ["user"],
-    });
-
-    if (!bookmark) {
-      throw new NotFoundException("북마크를 찾을 수 없습니다.");
-    }
-
-    if (bookmark.user.id !== userId) {
-      throw new ForbiddenException("이 북마크를 삭제할 권한이 없습니다.");
-    }
+    await verifyAuthorization(this.bookmarkRepository, bookmarkId, userId, "북마크");
 
     await this.bookmarkRepository.delete(bookmarkId);
   }
 
   async updateLastAccessedAt(userId: string, bookmarkId: string): Promise<void> {
-    const bookmark = await this.bookmarkRepository.findOne({
-      where: { id: bookmarkId },
-      relations: ["user"],
-    });
-
-    if (!bookmark) {
-      throw new NotFoundException("북마크를 찾을 수 없습니다.");
-    }
-
-    if (bookmark.user.id !== userId) {
-      throw new ForbiddenException("이 북마크에 접근할 권한이 없습니다.");
-    }
+    await verifyAuthorization(this.bookmarkRepository, bookmarkId, userId, "북마크");
 
     await this.bookmarkRepository.update(bookmarkId, { lastAccessedAt: new Date() });
   }
