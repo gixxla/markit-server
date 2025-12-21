@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import axios from "axios";
@@ -118,9 +118,13 @@ export class BookmarkService {
 
     const items = bookmarks.map((bm) => ({
       ...bm,
-      tags: bm.bookmarkTags.map((bt) => bt.tag.name),
+      tags: bm.bookmarkTags.map((bt) => ({
+        id: bt.tag.id,
+        name: bt.tag.name,
+        colorCode: bt.tag.colorCode,
+      })),
       bookmarkTags: undefined,
-      category: bm.category?.name,
+      category: { id: bm.category?.id, name: bm.category?.name },
     }));
 
     return {
@@ -136,7 +140,7 @@ export class BookmarkService {
   async update(userId: string, bookmarkId: string, updateDto: UpdateBookmarkDto): Promise<Bookmark> {
     const { tags, ...data } = updateDto;
 
-    const bookmark = await verifyAuthorization(this.bookmarkRepository, bookmarkId, userId, "북마크");
+    await verifyAuthorization(this.bookmarkRepository, bookmarkId, userId, "북마크");
 
     const dataToUpdate = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined),
