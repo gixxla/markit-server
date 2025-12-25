@@ -14,12 +14,12 @@ export class UserController {
 
   @Public()
   @Post("guest")
-  async registerByGuest(@Body() registrationData: { guestId: string }) {
+  async registerAsGuest(@Body() registrationData: { guestId: string }) {
     if (!registrationData.guestId) {
       throw new HttpException("Guest ID is required", HttpStatus.BAD_REQUEST);
     }
 
-    const user = await this.userService.registerByGuest(registrationData.guestId);
+    const user = await this.userService.registerAsGuest(registrationData.guestId);
 
     return {
       id: user.id,

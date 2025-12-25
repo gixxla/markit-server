@@ -14,7 +14,7 @@ export class UserService {
     private bookmarkService: BookmarkService,
   ) {}
 
-  async registerByGuest(guestId: string): Promise<User> {
+  async registerAsGuest(guestId: string): Promise<User> {
     let user = await this.userRepository.findOne({ where: { guestId } });
 
     if (user) {
