@@ -1,5 +1,5 @@
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
-import { Repository } from "typeorm";
+import type { Repository } from "typeorm";
 
 /**
  * 엔티티 소유권 검증 헬퍼 함수

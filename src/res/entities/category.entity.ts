@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm";
 import { CommonEntity } from "./common.entity";
 import { User } from "./user.entity";

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import { Entity, PrimaryColumn, JoinColumn, ManyToOne } from "typeorm";
 import { Bookmark } from "./bookmark.entity";
 import { Tag } from "./tag.entity";

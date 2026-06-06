@@ -1,4 +1,4 @@
-import { CreateDateColumn, PrimaryGeneratedColumn } from "typeorm";
+import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export class CommonEntity {
   @PrimaryGeneratedColumn({ type: "bigint" })
@@ -6,4 +6,7 @@ export class CommonEntity {
 
   @CreateDateColumn({ name: "created_at", type: "timestamp" })
   createdAt: Date;
+
+  @UpdateDateColumn({ name: "updated_at", type: "timestamp" })
+  updatedAt: Date;
 }
