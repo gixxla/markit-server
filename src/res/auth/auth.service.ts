@@ -30,12 +30,13 @@ export class AuthService {
       throw new BadRequestException("비밀번호가 일치하지 않습니다.");
     }
 
-    await this.userService.update(user.id, { lastActiveAt: new Date() });
+    await this.userService.updateLastActiveAt(user.id);
 
     return {
       id: user.id,
       email: user.email,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       lastActiveAt: user.lastActiveAt,
     };
   }

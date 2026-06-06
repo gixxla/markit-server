@@ -11,7 +11,7 @@ import {
   Delete,
   Param,
 } from "@nestjs/common";
-import { Public } from "src/decorators/public.decorator";
+import { Public } from "../../decorators/public.decorator";
 import { BookmarkService } from "./bookmark.service";
 import { CreateBookmarkDto } from "./dto/create-bookmark.dto";
 import { User } from "../entities/user.entity";

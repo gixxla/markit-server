@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { verifyAuthorization } from "src/common/helpers/authorization.helper";
+import { verifyAuthorization } from "../../common/helpers/authorization.helper";
 import { Category } from "../entities/category.entity";
 import { User } from "../entities/user.entity";
 import { CreateCategoryDto } from "./dto/create-category.dto";

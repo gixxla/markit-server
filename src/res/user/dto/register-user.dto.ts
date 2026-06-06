@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsString, MinLength, IsUUID, IsArray, ValidateNested, IsOptional } from "class-validator";
-import { LocalBookmarkDto } from "src/res/auth/dto/local-bookmark.dto";
+import { LocalBookmarkDto } from "../../auth/dto/local-bookmark.dto";
 
 export class RegisterDto {
   @IsOptional()

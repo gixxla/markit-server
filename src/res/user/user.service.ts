@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { DataSource, FindOptionsWhere, Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { User } from "../entities/user.entity";
 import { RegisterDto } from "./dto/register-user.dto";
@@ -12,14 +12,14 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private bookmarkService: BookmarkService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async registerAsGuest(guestId: string): Promise<User> {
     let user = await this.userRepository.findOne({ where: { guestId } });
 
     if (user) {
-      user.lastActiveAt = new Date();
-      await this.userRepository.save(user);
+      await this.updateLastActiveAt(user.id);
       return user;
     }
 
@@ -114,5 +114,9 @@ export class UserService {
 
   async update(userId: string, updateData: Partial<User>): Promise<void> {
     await this.userRepository.update(userId, updateData);
+  }
+
+  async updateLastActiveAt(userId: string): Promise<void> {
+    await this.dataSource.query(`UPDATE "user" SET last_active_at = NOW() WHERE id = $1`, [userId]);
   }
 }

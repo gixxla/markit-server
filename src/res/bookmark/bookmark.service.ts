@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
@@ -24,6 +24,7 @@ export class BookmarkService {
     private readonly bookmarkTagRepository: Repository<BookmarkTag>,
     private readonly categoryService: CategoryService,
     private readonly tagService: TagService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async fetchTitleFromUrl(url: string): Promise<string> {
@@ -185,7 +186,7 @@ export class BookmarkService {
   async updateLastAccessedAt(userId: string, bookmarkId: string): Promise<void> {
     await verifyAuthorization(this.bookmarkRepository, bookmarkId, userId, "북마크");
 
-    await this.bookmarkRepository.update(bookmarkId, { lastAccessedAt: new Date() });
+    await this.dataSource.query(`UPDATE bookmark SET last_accessed_at = NOW() WHERE id = $1`, [bookmarkId]);
   }
 
   async migrate(user: User, localBookmarkDto: LocalBookmarkDto): Promise<Bookmark> {

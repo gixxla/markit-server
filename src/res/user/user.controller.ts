@@ -1,5 +1,5 @@
 import { Controller, Post, Body, HttpException, HttpStatus, HttpCode, Inject, forwardRef } from "@nestjs/common";
-import { Public } from "src/decorators/public.decorator";
+import { Public } from "../../decorators/public.decorator";
 import { UserService } from "./user.service";
 import { RegisterDto } from "./dto/register-user.dto";
 import { AuthService } from "../auth/auth.service";
@@ -26,6 +26,7 @@ export class UserController {
       guestId: user.guestId,
       isRegistered: user.isRegistered,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 
@@ -50,6 +51,7 @@ export class UserController {
       email: user.email,
       isRegistered: user.isRegistered,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       accessToken,
     };
   }
